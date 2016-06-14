@@ -16,6 +16,8 @@ g = zeros(size(z));
 % matrices. For a matrix, your function should perform the sigmoid
 % function on every element.
 
+g = 1 ./ (1 + e.^-z);
+
 
 % =============================================================
 

@@ -20,11 +20,13 @@ grad = zeros(size(theta));
 % Note: grad should have the same dimensions as theta
 %
 
+% logistic
+hyp = sigmoid(X*theta);
 
+J = (1/m) * sum(-y' * log(hyp) - (1 - y') * log(1 - hyp));
 
-
-
-
+% gradient of the cost is a vector of the same length as theta
+grad = (1/m) * (hyp - y)' * X;
 
 
 % =============================================================
