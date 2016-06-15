@@ -18,7 +18,15 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 
 
+[J, grad] = costFunction(theta, X, y);
 
+% don't regularise theta0 (column 2 to the end)
+J += (lambda / (2*m)) * sum(theta(2:end).^2);
+
+% (lambda/m) * theta
+% the calculation is 1x27 and grad is 1x28, so add 1 column to calculation
+reg = (lambda/m) * theta(2:end);
+grad += [0; reg]';
 
 
 
