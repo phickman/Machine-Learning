@@ -139,19 +139,18 @@ Delta2 = 0;
 for i = 1:m
   % 1: Perform forward propagation, see the separate tutorial if necessary.
   %% Input Layer  
-  a1 = [ones(m, 1) X];
-  z2 = Theta1 * a1';
+  a1 = [1 X(i,:)]; % x(i)
+  z2 = a1 * Theta1';
   %% Hidden Layer
   a2 = sigmoid(z2);
-  a2 = [ones(1, size(a2, 2)); a2];
+  a2 = [1 a2];
   %% Output Layer
-  z3 = Theta2 * a2;
+  z3 = a2 * Theta2';
   a3 = sigmoid(z3);
   
   % 2: δ3 or d3 is the difference between a3 and the y_matrix.
   %    The dimensions are the same as both, (m x r).
-  yi = y_matrix(i, :);
-  d3 = a3 - yi';
+  d3 = (a3 - y_matrix(i, :)); % y(i)
 
   % 3: z2 came from the forward propagation process - it's the product of a1 
   %    and Theta1, prior to applying the sigmoid() function. 
@@ -161,7 +160,7 @@ for i = 1:m
   %    d2 is the product of d3 and Theta2(no bias), then element-wise scaled 
   %    by sigmoid gradient of z2. The size is (m x r) ⋅ (r x h) --> (m x h). 
   %    The size is the same as z2, as must be.
-  d2 = (d3' * Theta2(:,2:end)) .* sigmoidGradient(z2)';
+  d2 = (d3 * Theta2(:,2:end)) .* sigmoidGradient(z2);
 
   % 5: Δ1 or Delta1 is the product of d2 and a1. 
   %    The size is (h x m) ⋅ (m x n) --> (h x n)
@@ -169,7 +168,7 @@ for i = 1:m
 
   % 6: Δ2 or Delta2 is the product of d3 and a2. 
   %    The size is (r x m) ⋅ (m x [h+1]) --> (r x [h+1])
-  Delta2 += (d3 * a2);
+  Delta2 += (d3' * a2);
 
 endfor
 
