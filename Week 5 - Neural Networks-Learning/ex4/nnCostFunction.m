@@ -55,27 +55,26 @@ Theta2_grad = zeros(size(Theta2));
 % 1 - Expand the 'y' output values into a matrix of single values (see ex4.pdf Page 5). 
 % This is most easily done using an eye() matrix of size num_labels, with 
 % vectorized indexing by 'y'. A useful variable name would be "y_matrix", as this...
-y_matrix = eye(num_labels)(y,:)
+y_matrix = eye(num_labels)(y,:);
 
 % 2 - Perform the forward propagation:
 
+%% Input Layer
 % a1 equals the X input matrix with a column of 1's added (bias units) as the first column.
 a1 = [ones(m, 1) X];
-
 % z2 equals the product of a1 and Θ1
 z2 = Theta1 * a1';
 
+%% Output Layer
 % a2 is the result of passing z2 through g()
 a2 = sigmoid(z2);
-
 % Then add a column of bias units to a2 (as the first column).
-a2 = [ones(m, 1) a2];
-
+a2 = [ones(1, size(a2, 2)); a2];
 % NOTE: Be sure you DON'T add the bias units as a new row of Theta.
 
+%% Output Layer
 % z3 equals the product of a2 and Θ2
 z3 = Theta2 * a2;
-
 % a3 is the result of passing z3 through g()
 a3 = sigmoid(z3);
 
@@ -87,28 +86,35 @@ a3 = sigmoid(z3);
 % Cost should be a scalar value. Since y_matrix and a3 are both matrices,
 % you need to compute the double-sum.
 
+hyp = a3;
+
 % Remember to use element-wise multiplication with the log() function.
 % Also, we're using the natural log, not log10().
 
-hyp = a3;
-
-temp = theta; 
-temp(1) = 0;   % because we don't add anything for j = 0
-
-J = ((1/m) * sum(-y_matrix' * log(hyp) - (1 - y_matrix') * log(1 - hyp)));
-
-grad = ((1/m) * (hyp - y_matrix)' * X);
+% i think ex3 was ok with matrix multiplication because one parameter
+% was a vector.  this time both are matrices.
+cost_calc = (-y_matrix' .* log(hyp) - (1 - y_matrix') .* log(1 - hyp));
+% make cost_calc one column with cost_calc(:) and sum all (need scalar value)
+J = (1/m) * sum(cost_calc(:));
 
 % Now you can run ex4.m to check the unregularized cost is correct, 
 % then you can submit this portion to the grader.
 
 % Cost Regularization:
 
-% 4 - Compute the regularized component of the cost according to ex4.pdf Page 6, using Θ1 and Θ2 (excluding the Theta columns for the bias units), along with λ, and m. The easiest method to do this is to compute the regularization terms separately, then add them to the unregularized cost from Step 3.
+% 4 - Compute the regularized component of the cost according to ex4.pdf Page 6, 
+% using Θ1 and Θ2 (excluding the Theta columns for the bias units), along with λ, 
+% and m. The easiest method to do this is to compute the regularization terms 
+% separately, then add them to the unregularized cost from Step 3.
 
-% You can run ex4.m to check the regularized cost, then you can submit this portion to the grader.
+% You can run ex4.m to check the regularized cost, then you can submit this 
+% portion to the grader.
 
+% exclude the bias column
+temp_theta1 = Theta1(:,2:end);
+temp_theta2 = Theta2(:,2:end);
 
+J += (lambda / (2*m)) * (sum(temp_theta1(:).^2) + sum(temp_theta2(:).^2));  % regularised
 
 
 % Part 2: Implement the backpropagation algorithm to compute the gradients
