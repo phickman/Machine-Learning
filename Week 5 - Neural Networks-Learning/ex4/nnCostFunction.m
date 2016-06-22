@@ -65,7 +65,7 @@ a1 = [ones(m, 1) X];
 % z2 equals the product of a1 and Θ1
 z2 = Theta1 * a1';
 
-%% Output Layer
+%% Hidden Layer
 % a2 is the result of passing z2 through g()
 a2 = sigmoid(z2);
 % Then add a column of bias units to a2 (as the first column).
@@ -132,6 +132,68 @@ J += (lambda / (2*m)) * (sum(temp_theta1(:).^2) + sum(temp_theta2(:).^2));  % re
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+
+Delta1 = 0;
+Delta2 = 0;
+
+for i = 1:m
+  % 1: Perform forward propagation, see the separate tutorial if necessary.
+  %% Input Layer  
+  a1 = [ones(m, 1) X];
+  z2 = Theta1 * a1';
+  %% Hidden Layer
+  a2 = sigmoid(z2);
+  a2 = [ones(1, size(a2, 2)); a2];
+  %% Output Layer
+  z3 = Theta2 * a2;
+  a3 = sigmoid(z3);
+  
+  % 2: δ3 or d3 is the difference between a3 and the y_matrix.
+  %    The dimensions are the same as both, (m x r).
+  yi = y_matrix(i, :);
+  d3 = a3 - yi;
+
+  % 3: z2 came from the forward propagation process - it's the product of a1 
+  %    and Theta1, prior to applying the sigmoid() function. 
+  %    Dimensions are (m x n) ⋅ (n x h) --> (m x h)
+
+  % 4: δ2 or d2 is tricky. It uses the (:,2:end) columns of Theta2. 
+  %    d2 is the product of d3 and Theta2(no bias), then element-wise scaled 
+  %    by sigmoid gradient of z2. The size is (m x r) ⋅ (r x h) --> (m x h). 
+  %    The size is the same as z2, as must be.
+  d2 = (d3 * Theta2(:,2:end)) .* sigmoidGradient(z2);
+
+  % 5: Δ1 or Delta1 is the product of d2 and a1. 
+  %    The size is (h x m) ⋅ (m x n) --> (h x n)
+  Delta1 += (d1 * a1);
+
+  % 6: Δ2 or Delta2 is the product of d3 and a2. 
+  %    The size is (r x m) ⋅ (m x [h+1]) --> (r x [h+1])
+  Delta2 += (d3 * a2);
+
+endfor
+
+% 7: Theta1_grad and Theta2_grad are the same size as their respective Deltas, just scaled by 1/m.
+Theta1_grad = (1/m) * Delta1;
+Theta2_grad = (1/m) * Delta2;
+
+% Now you have the unregularized gradients. Check your results using ex4.m, and submit this portion to the grader.
+
+% Since Theta1 and Theta2 are local copies, and we've already computed our hypothesis value during forward-propagation, we're free to modify them to make the gradient regularization easy to compute.
+
+% 8: So, set the first column of Theta1 and Theta2 to all-zeros. Here's a method you can try in your workspace console:
+
+% Q = rand(3,4)       % create a test matrix
+% Q(:,1) = 0          % set the 1st column of all rows to 0
+
+% 9: Scale each Theta matrix by λ/m. Use enough parenthesis so the operation is correct.
+%Theta1_grad
+%Theta2_grad
+
+% 10: Add each of these modified-and-scaled Theta matrices to the un-regularized Theta gradients that you computed earlier.
+
+
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
