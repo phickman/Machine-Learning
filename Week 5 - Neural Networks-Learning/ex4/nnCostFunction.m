@@ -176,21 +176,6 @@ endfor
 Theta1_grad = (1/m) * Delta1;
 Theta2_grad = (1/m) * Delta2;
 
-% Now you have the unregularized gradients. Check your results using ex4.m, and submit this portion to the grader.
-
-% Since Theta1 and Theta2 are local copies, and we've already computed our hypothesis value during forward-propagation, we're free to modify them to make the gradient regularization easy to compute.
-
-% 8: So, set the first column of Theta1 and Theta2 to all-zeros. Here's a method you can try in your workspace console:
-
-% Q = rand(3,4)       % create a test matrix
-% Q(:,1) = 0          % set the 1st column of all rows to 0
-
-% 9: Scale each Theta matrix by λ/m. Use enough parenthesis so the operation is correct.
-%Theta1_grad
-%Theta2_grad
-
-% 10: Add each of these modified-and-scaled Theta matrices to the un-regularized Theta gradients that you computed earlier.
-
 
 
 % Part 3: Implement regularization with the cost function and gradients.
@@ -201,6 +186,22 @@ Theta2_grad = (1/m) * Delta2;
 %               and Theta2_grad from Part 2.
 %
 
+% Since Theta1 and Theta2 are local copies, and we've already computed our 
+% hypothesis value during forward-propagation, we're free to modify them to 
+% make the gradient regularization easy to compute.
+
+% 8: So, set the first column of Theta1 and Theta2 to all-zeros. 
+Theta1(:, 1) = 0;
+Theta2(:, 1) = 0;
+
+% 9: Scale each Theta matrix by λ/m. Use enough parenthesis so the operation is correct.
+theta1_scale = (lambda/m) * Theta1;
+theta2_scale = (lambda/m) * Theta2;
+
+% 10: Add each of these modified-and-scaled Theta matrices to the un-regularized 
+%     Theta gradients that you computed earlier.
+Theta1_grad += theta1_scale;
+Theta2_grad += theta2_scale;
 
 
 
