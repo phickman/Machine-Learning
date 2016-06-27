@@ -19,13 +19,17 @@ grad = zeros(size(theta));
 %               You should set J to the cost and grad to the gradient.
 %
 
+temp = theta; 
+temp(1) = 0;   % because we don't add anything for j = 0 (regularisation)
+
+hyp = X * theta;
+sq_err = (hyp - y) .^ 2;
+J = sum(sq_err) / (2 * m) + ... % linear regression
+    ((lambda / (2*m)) * sum(temp.^2));  % regularised
 
 
-
-
-
-
-
+grad = (1/m) * (X' * (hyp - y)) + ...
+        ((lambda/m) * temp);  % regularised
 
 
 

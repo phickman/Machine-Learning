@@ -53,9 +53,18 @@ error_val   = zeros(m, 1);
 
 % ---------------------- Sample Solution ----------------------
 
+for i=1:m
+  theta = trainLinearReg(X(1:i,:), y(1:i), lambda);
 
-
-
+  % calculate training error (set lambda=0 as training error doesn't include regularisation)
+  % training set error computed on the training subset (i.e., X(1:n,:) and y(1:n))
+  % (instead of the entire training set). However, for the cross validation error,
+  % computed over the entire cross validation set
+  [Jtrain, gradtrain] = linearRegCostFunction(X(1:i,:), y(1:i), theta, 0);
+  error_train(i) = Jtrain;
+  [Jcv, gradcv] = linearRegCostFunction(Xval, yval, theta, 0);
+  error_val(i) = Jcv;
+endfor
 
 
 
