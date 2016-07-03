@@ -22,9 +22,29 @@ idx = zeros(size(X,1), 1);
 %
 
 
+% easy way: iterate every example
+%for i = 1:length(X)
+%  xi = X(i,:);
+%  diff = sum((xi-centroids).^2');
+%  [m midx] = min(diff);
+  % find closest centroid
+%  idx(i) = midx;
+%end
 
 
+% followed tutorial => https://www.coursera.org/learn/machine-learning/discussions/weeks/8/threads/ncYc-ddQEeWaURKFEvfOjQ
+% number of training examples by number of centroids
+distance = zeros(size(X,1), K);
 
+for i = 1:K
+  % calculate distance of all X's to this centroid
+  diffs = bsxfun(@minus, X, centroids(i,:));
+  % calculate sum of the squared differences
+  distance(:,i) = sum(diffs.^2, 2);
+end
+
+% identify the column (centroid) with the minimum sum of squared differences
+[mx, idx] = min(distance, [], 2);
 
 
 % =============================================================

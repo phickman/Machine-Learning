@@ -27,9 +27,12 @@ centroids = zeros(K, n);
 %
 
 
-
-
-
+for i = 1:K
+  % identify rows in X by finding indexes of idx where i=idx(value)
+  sel = find(idx == i); % i ranges from 1 to K
+  % compute mean of all points that belong to this centroid
+  centroids(i,:) = mean(X(sel,:));
+end
 
 
 
