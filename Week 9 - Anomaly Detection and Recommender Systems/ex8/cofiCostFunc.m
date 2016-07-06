@@ -41,17 +41,58 @@ Theta_grad = zeros(size(Theta));
 %
 
 
+# Compute the predicted movie ratings for all users using the product of X and Theta
+prediction = X*Theta';
+
+# Compute the movie rating error by subtracting Y from the predicted ratings.
+err = prediction - Y;
+
+# Compute the "error_factor" my multiplying the movie rating error by the R matrix. 
+# The error factor will be 0 for movies that a user has not rated. 
+# Use the type of multiplication by R (vector or element-wise) so the size of 
+# the error factor matrix remains unchanged (movies x users).
+error_factor = err .* R;
+
+# (Note: there is a quirk in the submit grader's test case that requires you to 
+# use the R matrix to ignore movies that have had no ratings).
+
+# Calculate the cost:
+# compute the unregularized cost as a scaled sum of the squares of all of the 
+# terms in error_factor. The result should be a scalar.
+J = sum(error_factor(:).^2)/2;
+
+# Calculate the gradients (ref: the formulas on Page 10 of ex8,pdf):
+# The X gradient is the product of the error factor and the Theta matrix. The 
+# sum is computed automatically by the vector multiplication. Dimensions are (movies x features)
+X_grad = error_factor * Theta;
+
+# The Theta gradient is the product of the error factor and the X matrix. The 
+# sum is computed automatically by the vector multiplication. Dimensions are (users x features)
+Theta_grad = error_factor' * X;
+
+# X_grad should be a matrix of the same size as X
+# Theta_grad is a matrix of the same size as Theta
 
 
+# Calculate the regularized cost:
+# compute the regularization term as the scaled sum of the squares of all terms 
+# in Theta and X. The result should be a scalar. Note that for Recommender Systems 
+# there are no bias terms, so regularization should include all columns of X and Theta.
+reg_cost = ((lambda/2) * sum(Theta(:).^2)) + ((lambda/2) * sum(X(:).^2));
 
+# Add the regularized and un-regularized cost terms.
+J += reg_cost;
 
+# Calculate the gradient regularization terms (ref: the formulas in the middle of Page 13 of ex8.pdf)
+# The X gradient regularization is the X matrix scaled by lambda.
+reg_grad = lambda * X;
 
+# The Theta gradient regularization is the Theta matrix scaled by lambda.
+reg_theta = lambda * Theta;
 
-
-
-
-
-
+# Add the regularization terms to their unregularized values.
+X_grad += reg_grad;
+Theta_grad += reg_theta;
 
 
 
